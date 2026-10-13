@@ -1,0 +1,127 @@
+version: 2
+
+models:
+  - name: stg_orders
+    description: Cleaned order-level data from the Olist dataset.
+    columns:
+      - name: order_id
+        data_tests:
+          - unique
+          - not_null
+      - name: customer_id
+        data_tests:
+          - not_null
+      - name: order_status
+        data_tests:
+          - not_null
+
+  - name: stg_order_items
+    description: Cleaned order item data with one row per product line in an order.
+    columns:
+      - name: order_item_key
+        data_tests:
+          - unique
+          - not_null
+      - name: order_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_orders')
+                field: order_id
+      - name: product_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_products')
+                field: product_id
+      - name: seller_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_sellers')
+                field: seller_id
+      - name: price
+        data_tests:
+          - not_null
+      - name: freight_value
+        data_tests:
+          - not_null
+
+  - name: stg_customers
+    description: Cleaned customer data.
+    columns:
+      - name: customer_id
+        data_tests:
+          - unique
+          - not_null
+      - name: customer_unique_id
+        data_tests:
+          - not_null
+
+  - name: stg_products
+    description: Cleaned product data.
+    columns:
+      - name: product_id
+        data_tests:
+          - unique
+          - not_null
+      - name: product_category_name
+        data_tests:
+          - not_null
+
+  - name: stg_sellers
+    description: Cleaned seller data.
+    columns:
+      - name: seller_id
+        data_tests:
+          - unique
+          - not_null
+
+  - name: stg_payments
+    description: Cleaned payment data.
+    columns:
+      - name: payment_key
+        data_tests:
+          - unique
+          - not_null
+      - name: order_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_orders')
+                field: order_id
+      - name: payment_value
+        data_tests:
+          - not_null
+
+  - name: stg_reviews
+    description: Cleaned review data.
+    columns:
+      - name: review_id
+        data_tests:
+          - not_null
+      - name: order_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_orders')
+                field: order_id
+      - name: review_score
+        data_tests:
+          - not_null
+
+  - name: stg_category_translation
+    description: Product category translations from Portuguese to English.
+    columns:
+      - name: product_category_name
+        data_tests:
+          - unique
+          - not_null
+      - name: product_category_name_english
+        data_tests:
+          - not_null

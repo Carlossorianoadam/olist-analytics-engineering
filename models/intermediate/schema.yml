@@ -1,0 +1,88 @@
+version: 2
+
+models:
+  - name: int_order_items_enriched
+    description: Order item data enriched with product, seller and category information.
+    columns:
+      - name: order_item_key
+        data_tests:
+          - unique
+          - not_null
+      - name: order_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_orders')
+                field: order_id
+      - name: product_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_products')
+                field: product_id
+      - name: seller_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_sellers')
+                field: seller_id
+      - name: item_price
+        data_tests:
+          - not_null
+      - name: freight_value
+        data_tests:
+          - not_null
+      - name: item_total_value
+        data_tests:
+          - not_null
+
+  - name: int_payments_aggregated
+    description: Payment information aggregated at order level.
+    columns:
+      - name: order_id
+        data_tests:
+          - unique
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_orders')
+                field: order_id
+      - name: total_payment_value
+        data_tests:
+          - not_null
+
+  - name: int_reviews_aggregated
+    description: Review information aggregated at order level.
+    columns:
+      - name: order_id
+        data_tests:
+          - unique
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_orders')
+                field: order_id
+      - name: average_review_score
+        data_tests:
+          - not_null
+
+  - name: int_orders_enriched
+    description: Order-level model enriched with customer, payment, review and delivery information.
+    columns:
+      - name: order_id
+        data_tests:
+          - unique
+          - not_null
+      - name: customer_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_customers')
+                field: customer_id
+      - name: order_status
+        data_tests:
+          - not_null

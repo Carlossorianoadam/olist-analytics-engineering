@@ -1,0 +1,93 @@
+version: 2
+
+models:
+  - name: mart_order_items
+    description: Final order item mart with one row per order item, enriched with customer, seller, product, delivery and review information.
+    columns:
+      - name: order_item_key
+        data_tests:
+          - unique
+          - not_null
+      - name: order_id
+        data_tests:
+          - not_null
+      - name: product_id
+        data_tests:
+          - not_null
+      - name: seller_id
+        data_tests:
+          - not_null
+      - name: item_price
+        data_tests:
+          - not_null
+      - name: freight_value
+        data_tests:
+          - not_null
+      - name: item_total_value
+        data_tests:
+          - not_null
+
+  - name: mart_orders
+    description: Final order-level mart with one row per order, including customer, payment, review and delivery metrics.
+    columns:
+      - name: order_id
+        data_tests:
+          - unique
+          - not_null
+      - name: customer_id
+        data_tests:
+          - not_null
+      - name: customer_unique_id
+        data_tests:
+          - not_null
+      - name: order_status
+        data_tests:
+          - not_null
+      - name: total_order_value
+        data_tests:
+          - not_null
+
+  - name: mart_product_performance
+    description: Product-level performance mart for revenue, sales volume, delivery and review analysis.
+    columns:
+      - name: product_id
+        data_tests:
+          - unique
+          - not_null
+      - name: product_category
+        data_tests:
+          - not_null
+      - name: number_of_orders
+        data_tests:
+          - not_null
+      - name: total_item_revenue
+        data_tests:
+          - not_null
+
+  - name: mart_customer_metrics
+    description: Customer-level mart with purchase frequency, spend, delivery and review metrics.
+    columns:
+      - name: customer_unique_id
+        data_tests:
+          - unique
+          - not_null
+      - name: number_of_orders
+        data_tests:
+          - not_null
+      - name: total_order_value
+        data_tests:
+          - not_null
+
+  - name: mart_seller_performance
+    description: Seller-level performance mart for revenue, delivery and customer satisfaction analysis.
+    columns:
+      - name: seller_id
+        data_tests:
+          - unique
+          - not_null
+      - name: number_of_orders
+        data_tests:
+          - not_null
+      - name: total_item_revenue
+        data_tests:
+          - not_null

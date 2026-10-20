@@ -1,28 +1,68 @@
+
+with seller_order_reviews as (
+
+    -- One review score per seller and order
+    select distinct
+        seller_id,
+        order_id,
+        average_review_score
+
+    from {{ ref('mart_order_items') }}
+
+),
+
+seller_review_metrics as (
+
+    select
+        seller_id,
+        round(avg(average_review_score), 2) as average_review_score
+
+    from seller_order_reviews
+
+    group by seller_id
+
+)
+
 select
-    seller_id,
+    oi.seller_id,
 
-    min(seller_city) as seller_city,
-    min(seller_state) as seller_state,
+    min(oi.seller_city) as seller_city,
+    min(oi.seller_state) as seller_state,
 
-    count(distinct order_id) as number_of_orders,
+    count(distinct oi.order_id) as number_of_orders,
     count(*) as number_of_order_items,
 
-    round(sum(item_price), 2) as total_item_revenue,
-    round(sum(freight_value), 2) as total_freight_value,
-    round(sum(item_total_value), 2) as total_revenue_with_freight,
+    round(sum(oi.item_price), 2) as total_item_revenue,
+    round(sum(oi.freight_value), 2) as total_freight_value,
+    round(sum(oi.item_total_value), 2) as total_revenue_with_freight,
 
-    round(sum(delivered_item_revenue), 2) as delivered_item_revenue,
-    round(avg(item_price), 2) as average_item_price,
+    round(sum(oi.delivered_item_revenue), 2) as delivered_item_revenue,
+    round(avg(oi.item_price), 2) as average_item_price,
 
-    round(avg(average_review_score), 2) as average_review_score,
-    round(avg(delivery_days), 2) as average_delivery_days,
+    -- Each seller-order pair contributes once
+    sr.average_review_score,
 
-    sum(case when is_late_delivery = true then 1 else 0 end) as late_delivery_items,
+    round(avg(oi.delivery_days), 2) as average_delivery_days,
+
+    sum(
+        case when oi.is_late_delivery = true then 1 else 0 end
+    ) as late_delivery_items,
+
+    count(oi.is_late_delivery) as evaluable_delivery_items,
+
     round(
-        sum(case when is_late_delivery = true then 1 else 0 end) * 100.0 / count(*),
+        sum(
+            case when oi.is_late_delivery = true then 1 else 0 end
+        ) * 100.0
+        / nullif(count(oi.is_late_delivery), 0),
         2
     ) as late_delivery_rate_pct
 
-from {{ ref('mart_order_items') }}
+from {{ ref('mart_order_items') }} oi
 
-group by seller_id
+left join seller_review_metrics sr
+    on oi.seller_id = sr.seller_id
+
+group by
+    oi.seller_id,
+    sr.average_review_score

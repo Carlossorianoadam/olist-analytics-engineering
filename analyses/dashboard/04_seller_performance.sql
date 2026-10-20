@@ -18,4 +18,4 @@ select
 
 from mart_seller_performance
 
-order by total_item_revenue desc
+order by delivered_item_revenue desc

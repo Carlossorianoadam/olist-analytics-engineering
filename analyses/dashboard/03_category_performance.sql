@@ -1,28 +1,63 @@
-select
-    product_category,
 
-    count(distinct order_id) as total_orders,
+with category_order_reviews as (
+
+    -- One review score per category and order
+    select distinct
+        product_category,
+        order_id,
+        average_review_score
+
+    from mart_order_items
+
+),
+
+category_review_metrics as (
+
+    select
+        product_category,
+        round(avg(average_review_score), 2) as average_review_score
+
+    from category_order_reviews
+
+    group by product_category
+
+)
+
+select
+    oi.product_category,
+
+    count(distinct oi.order_id) as total_orders,
     count(*) as total_order_items,
 
-    round(sum(item_price), 2) as total_item_revenue,
-    round(sum(freight_value), 2) as total_freight_value,
-    round(sum(item_total_value), 2) as total_revenue_with_freight,
+    round(sum(oi.item_price), 2) as total_item_revenue,
+    round(sum(oi.freight_value), 2) as total_freight_value,
+    round(sum(oi.item_total_value), 2) as total_revenue_with_freight,
 
-    round(sum(delivered_item_revenue), 2) as delivered_item_revenue,
-    round(sum(delivered_item_total_value), 2) as delivered_revenue_with_freight,
+    round(sum(oi.delivered_item_revenue), 2) as delivered_item_revenue,
+    round(sum(oi.delivered_item_total_value), 2) as delivered_revenue_with_freight,
 
-    round(avg(item_price), 2) as average_item_price,
-    round(avg(average_review_score), 2) as average_review_score,
-    round(avg(delivery_days), 2) as average_delivery_days,
+    round(avg(oi.item_price), 2) as average_item_price,
+
+    -- Each category-order pair contributes once
+    cr.average_review_score,
+
+    round(avg(oi.delivery_days), 2) as average_delivery_days,
 
     round(
-        sum(case when is_late_delivery then 1 else 0 end) * 100.0 /
-        nullif(sum(case when delivery_days is not null then 1 else 0 end), 0),
+        count(*) filter (
+            where oi.is_late_delivery = true
+        ) * 100.0
+        / nullif(count(oi.is_late_delivery), 0),
         2
     ) as late_delivery_rate_pct
 
-from mart_order_items
+from mart_order_items oi
 
-group by product_category
+left join category_review_metrics cr
+    on oi.product_category = cr.product_category
+
+group by
+    oi.product_category,
+    cr.average_review_score
 
 order by delivered_item_revenue desc

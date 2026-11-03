@@ -10,3 +10,12 @@ data/raw/
 data/processed/
 .DS_Store
 dashboard/exports/
+
+airflow/.env
+
+# Airflow local and generated files
+airflow/config/airflow.cfg
+airflow/dbt/.user.yml
+**/__pycache__/
+*.py[cod]
+*.save

@@ -1,0 +1,7 @@
+olist_analytics:
+  outputs:
+    dev:
+      type: duckdb
+      path: /opt/olist_analytics/olist_analytics.duckdb
+      threads: 1
+  target: dev

@@ -130,6 +130,20 @@ The dashboard and analytical models cover:
 
 These definitions are kept separate to avoid mixing product revenue, freight and orders that were not delivered.
 
+## Key insights
+
+The dashboard highlights several patterns in the Olist dataset:
+
+1. **Overall performance:** The dataset contains **99,441 orders** and **R$ 13.22 million** in delivered item revenue. The average delivered order value is **R$ 159.83**, the average review score is **4.09/5**, and **8.11%** of evaluable deliveries are late.
+
+2. **Revenue and order volume tell different stories:** **Health & Beauty** is the leading category by delivered item revenue, at approximately **R$ 1.23 million**. **Bed, Bath & Table**, however, has the highest order count, at roughly **9,500 orders**. Category performance therefore depends on whether it is measured by revenue or order volume.
+
+3. **Delivery performance is strongly associated with customer ratings:** Average review scores are approximately **4.3/5** for early deliveries and **4.1/5** for on-time deliveries, compared with around **2.3/5** for late deliveries. Orders without a recorded delivery date have an average score of roughly **1.7/5**. These are descriptive associations and do not establish causation.
+
+4. **Delivery performance varies by state:** Bahia (BA) has the longest average delivery time in the state comparison, at around **19 days**, and a late-delivery rate of about **14%**. São Paulo (SP) is at the other end of the comparison, with around **9 days** on average and a late-delivery rate close to **6%**.
+
+*Note: Overall KPI figures are taken from the dashboard's displayed values. Category, delivery-group and state figures are rounded estimates read from the charts.*
+
 ## Power BI dashboard
 
 The Power BI report contains four pages:
